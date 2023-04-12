@@ -2,28 +2,31 @@ import Card from "../components/card.tsx"
 import CardExpenses from "../components/expenses.tsx"
 import CardFilter from "../components/filter.tsx"
 import Pagination from "../components/pagination.tsx"
+
 import "../styles/index.css"
-import { useEffect, useState } from "react";
+
+import { Link } from "react-router-dom"
+
+import { DataContext } from '../DataProvider.js';
+
+
+import { useEffect, useState, useContext } from "react";
 
 function Home() {
+  const { selectedFilter, setSelectedFilter, currentPage, setCurrentPage, min, setMin, max, setMax, filter } = useContext(DataContext);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [secLoading, setSecLoading] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [detailExpenses, setdetailExpenses] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [current, setCurrent] = useState(0);
   const [pagesRange, setPagesRange] = useState([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
-  const [filter, setFilter] = useState({Housing: "", Food:"", Transportation:"", "Personal Spending":""});
-  const [selectedFilter, setSelectedFilter] = useState("");
   const [currentFilter, setCurrentFilter] = useState("");
   const [category, setCategory] = useState([]);
-  const [min, setMin] = useState("");
-  const [max, setMax] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
 
   const URL = "https://utbmu5o3smxuba2iverkgqqj440temhn.lambda-url.ap-southeast-1.on.aws" 
@@ -90,6 +93,7 @@ function Home() {
           temp += "," + categories.id
         }
       }
+      return ""
     })
     setSelectedFilter(temp)
   }
@@ -101,7 +105,13 @@ function Home() {
   }
 
   const fetchExpensesData = async () => {
-    let customURL = `${URL}/expenses?page=${currentPage}&limit=${4}`
+    let customURL = ""
+    if(currentPage == null){
+      customURL = `${URL}/expenses?page=${1}&limit=${4}`
+    }
+    else {
+      customURL = `${URL}/expenses?page=${currentPage}&limit=${4}`
+    }
     if(selectedFilter !== ""){
       customURL += `&category_id=${selectedFilter}`
     }
@@ -164,8 +174,9 @@ function Home() {
     else if(selectedPage !== null){
       setCurrentPage(selectedPage)
     }
+
   }
-  useEffect(() => { 
+  useEffect(() => {
     fetchTotalExpensesData()
     fetchCategoryData()
    }, [])
@@ -185,25 +196,26 @@ function Home() {
   }, [current, currentFilter, filterPrice])
   
   if(error){
-    console.log(error)
     return <div>ERROR</div>
   }
   
   if (!isLoading || !secLoading){
     return <div>LOADING..</div>
   }
-
   return (
     <div className="h-screen flex justify-center items-center gap-x-10">
       <div className="flex flex-col gap-y-7 justify-start items-center h-[37rem]">
         {
           detailExpenses.map((items)=>{
-            return <Card 
-                    key={items.id} 
-                    categoryName={items.category.name} 
-                    price={items.amount} 
-                    desc={items.name}
-                    image={items.category.name}></Card>
+            return <Link to={`/detail/${items.id}`}>
+                    <Card 
+                      key={items.id} 
+                      categoryName={items.category.name} 
+                      price={items.amount} 
+                      desc={items.name}
+                      image={items.category.name}>
+                      </Card>
+                  </Link>
           })
         }
         <div className="flex gap-x-4">

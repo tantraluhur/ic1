@@ -5,7 +5,11 @@ import carImage from "../images/car.png"
 import foodImage from "../images/food.png"
 import drinkImage from "../images/drink.png"
 import iconImage from "../images/Icon.png"
-import React, { useState } from "react";
+import React, { useContext } from "react";
+
+
+import { DataContext } from '../DataProvider.js';
+
 
 interface ExpensesProps {
     func:Function
@@ -15,6 +19,7 @@ const Expenses = ({
     func,
 }: ExpensesProps): JSX.Element => {
 
+    const { selectedFilter, setSelectedFilter, currentPage, setCurrentPage, min, setMin, max, setMax, filter } = useContext(DataContext);
 
     return (
         <div className="bg-white w-[24rem] h-[24.5rem] rounded-lg flex flex-col pl-10 pt-7 gap-y-4" >
@@ -32,7 +37,7 @@ const Expenses = ({
             <div className="flex flex-col">
                 <div className="flex items-center gap-x-2 items-center">
                     <div className="pt-1">
-                        <input type="checkbox" onChange={() => func("Housing")}/>
+                        <input type="checkbox" onChange={() => func("Housing")} checked={filter["Housing"] === ""? false: true}/>
                     </div>
                     <div className="w-6">
                         <img src={homeImage} alt="logo"/>
@@ -44,7 +49,7 @@ const Expenses = ({
 
                 <div className="flex items-center gap-x-2">
                     <div className="pt-1">
-                        <input type="checkbox" onChange={() => func("Food")}/>
+                        <input type="checkbox" onChange={() => func("Food")} checked={filter["Food"] === ""? false: true}/>
                     </div>
                     <div className="w-6">
                         <img src={foodImage} alt="logo"/>
@@ -56,7 +61,7 @@ const Expenses = ({
 
                 <div className="flex items-center gap-x-2">
                     <div className="pt-1">
-                        <input type="checkbox" onChange={() => func("Transportation")}/>
+                        <input type="checkbox" onChange={() => func("Transportation")} checked={filter["Transportation"] === ""? false: true}/>
                     </div>
                     <div className="w-6">
                         <img src={carImage} alt="logo"/>
@@ -68,7 +73,7 @@ const Expenses = ({
 
                 <div className="flex items-center gap-x-2">
                     <div className="pt-1">
-                        <input type="checkbox" onChange={() => func("Personal Spending")}/>
+                        <input type="checkbox" onChange={() => func("Personal Spending")} checked={filter["Personal Spending"] === ""? false: true}/>
                     </div>
                     <div className="w-6">
                         <img src={drinkImage} alt="logo"/>
@@ -78,7 +83,7 @@ const Expenses = ({
                     </div>
                 </div>
             </div>
-            <hr className="w-80 bg-black h-[0.1px] border-none"/>
+            <hr className="w-80 border-black border-[1px] border-solid"/>
             <div className="font-bold text-xs">
                 <p>Filter by Expenses Range</p>
             </div>
@@ -92,11 +97,12 @@ const Expenses = ({
                             <img src={iconImage} alt="logo"/>
                         </div>
                         <div className="text-xs font-bold self-center">
-                            <input className="w-14 pl-2 pr-2" placeholder="100" onChange={(event) => func({Min: event.target.value})}/>
+                            <input className="w-14 pl-2 pr-2" placeholder="100" value={min === ""? "" : min}
+                            onChange={(event) => func({Min: event.target.value})}/>
                         </div>
                     </div>
                 </div>
-                <hr className="w-16 bg-black h-[0.1px] border-none self-center mt-4"/>
+                <hr className="w-16 border-black border-[1px] border-solid self-center mt-4"/>
                 <div className="flex flex-col">
                     <div className="text-xs italic font-medium self-center">
                         Max
@@ -106,7 +112,8 @@ const Expenses = ({
                             <img src={iconImage} alt="logo"/>
                         </div>
                         <div className="text-xs font-bold self-center">
-                            <input className="w-14 pl-2 pr-2" placeholder="200" onChange={(event) => func({Max: event.target.value})}/>
+                            <input className="w-14 pl-2 pr-2" placeholder="200" value={max === ""? "" : max}
+                            onChange={(event) => func({Max: event.target.value})}/>
                         </div>
                     </div>
                 </div>

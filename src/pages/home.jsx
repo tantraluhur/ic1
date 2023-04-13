@@ -96,6 +96,7 @@ function Home() {
       return ""
     })
     setSelectedFilter(temp)
+    setCurrentPage(1)
   }
 
   const fetchCategoryData = async () => {
